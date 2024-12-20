@@ -10,5 +10,5 @@ For now you can install this minor mode only manually from Github.
 In your emacs config file, you need to set up the shortcut API key: =(setq shortcut-api-key <api-key>)=
 ** Available functions
 
-*** get-story
+*** org-shortcut-get-story
 Prompts the user for a shortcut story id and inserts it as a new org-mode TODO

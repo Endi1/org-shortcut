@@ -1,25 +1,22 @@
-;;; org-shortcut.el --- shortcut.com bindings for org-mode  -*- lexical-binding:t -*-
-;; Copyright (C) 2024 Endi Sukaj.
+;;; org-shortcut.el --- Bindings for shortcut.com in org-mode  -*- lexical-binding:t -*-
+
+;; Copyright (C) 2024 Free Software Foundation, Inc.
+
 ;; Author: Endi Sukaj <endisukaj@gmail.com>
-;; Package-Requires: ((plz "0.9.1"))
-;; Keywords: org-mode
+;; URL: https://github.com/endi1/org-shortcut
+;; Package-Requires: ((plz "0.9.1") (emacs "28.1"))
+;; Keywords: comm
 ;; Version: 0.0.1
 ;;; Commentary:
 ;; This package provides a minor mode that adds shortcut.com bindings to org-mode
 
 ;;; Code:
 
-(defcustom shortcut-api-key nil
+(defcustom org-shortcut-api-key nil
   "The shortcut API key."
   :type '(string)
   :group 'org-shortcut-mode)
 
-
-;;;###autoload
-(defvar org-shortcut-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c o s g") 'get-story)
-    map))
 
 ;;;###autoload
 (define-minor-mode org-shortcut-mode
@@ -29,10 +26,9 @@ A positive prefix argument enables the mode.
 A negative prefix argument disables it."
   :init-value nil
   :lighter " Org Shortcut Mode"
-  :keymap org-shortcut-mode-map
   :global nil)
 
-(defun get-story (n)
+(defun org-shortcut-get-story (n)
   "Fetch story from shortcut with ID N and insert it as an =org-mode= entry."
   (interactive "nStory id: ")
   (let* (
@@ -40,30 +36,22 @@ A negative prefix argument disables it."
          (capture-buffer (current-buffer))) ; Ensures the current buffer is captured
     (if n
         (progn
-          (message "Fetching story with ID: %s from URL: %s with api-key %s" n url shortcut-api-key)
+          (message "Fetching story with ID: %s from URL: %s " n url)
           (plz 'get url
-            :headers (list (cons "Shortcut-Token" shortcut-api-key))
+            :headers (list (cons "Shortcut-Token" org-shortcut-api-key))
             :as #'json-read
             :then (lambda (alist)
-                    (message (format "response is %s" alist))
                     (with-current-buffer capture-buffer
                       (let* ((story-name (alist-get 'name alist))
                              (story-description (alist-get 'description alist))
                              (story-link (alist-get 'app_url alist)))
-                        (my/org-insert-entry
+                        (org-shortcut-org-insert-entry
                          story-name
                          story-link
                          story-description
-                         n))
-                      )
-                    )
-            )
-          )
-      )
-    )
-  )
+                         n)))))))))
 
-(defun my/org-insert-entry (&optional title story_link description story_id)
+(defun org-shortcut-org-insert-entry (&optional title story_link description story_id)
   (save-excursion
     (goto-char (point-max))  ; Move to end of buffer
     (unless (bolp) (newline))  ; Ensure we're at the start of a line
@@ -85,5 +73,5 @@ A negative prefix argument disables it."
       (insert ":END:\n"))))
 
 
-(provide 'org-shortcut-mode)
+(provide 'org-shortcut)
 ;;; org-shortcut.el ends here
