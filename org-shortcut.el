@@ -52,6 +52,7 @@ A negative prefix argument disables it."
                          n)))))))))
 
 (defun org-shortcut-org-insert-entry (&optional title story_link description story_id)
+  "Insert new org entry from a shortcut story with TITLE STORY_LINK DESCRIPTION STORY_ID."
   (save-excursion
     (goto-char (point-max))  ; Move to end of buffer
     (unless (bolp) (newline))  ; Ensure we're at the start of a line
