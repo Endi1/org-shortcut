@@ -1,16 +1,20 @@
 ;;; org-shortcut.el --- Bindings for shortcut.com in org-mode  -*- lexical-binding:t -*-
 
-;; Copyright (C) 2024 Free Software Foundation, Inc.
+;; Copyright (C) 2024
 
 ;; Author: Endi Sukaj <endisukaj@gmail.com>
 ;; URL: https://github.com/endi1/org-shortcut
 ;; Package-Requires: ((plz "0.9.1") (emacs "28.1"))
 ;; Keywords: comm
 ;; Version: 0.0.1
+;; SPDX-License-Identifier: GPL-3.0
 ;;; Commentary:
 ;; This package provides a minor mode that adds shortcut.com bindings to org-mode
 
 ;;; Code:
+
+(require 'json)
+(require 'plz)
 
 (defcustom org-shortcut-api-key nil
   "The shortcut API key."
