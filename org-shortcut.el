@@ -56,7 +56,7 @@ A negative prefix argument disables it."
                          n)))))))))
 
 (defun org-shortcut-search (s)
-  "Search for shortcut using the query Q and insert result as an =org-mode= entry."
+  "Search for shortcut using the query S and insert result as an =org-mode= entry."
   (interactive "sQuery: ")
   (let* (
          (url (when s (format "https://api.app.shortcut.com/api/v3/search?query=%s" s)))
@@ -74,16 +74,7 @@ A negative prefix argument disables it."
                           ;; (message "The list of names is %s" message-titles)
                           (let ((picked-story (completing-read "Choose: " message-titles)))
                                (message "The picked story is %s" picked-story)
-                               (message "The id of the picked story is %s" (cadr (assoc picked-story message-titles))))
-                          )
-                        ;; (org-shortcut-org-insert-entry
-                        ;;  story-name
-                        ;;  story-link
-                        ;;  story-description
-                        ;;  n)
-                        ))
-                    ;; (message alist)
-                    ))))))
+                               (org-shortcut-get-story (cadr (assoc picked-story message-titles)))))))))))))
 
 (defun org-shortcut-org-insert-entry (&optional title story_link description story_id)
   "Insert new org entry from a shortcut story.
