@@ -6,7 +6,7 @@
 ;; URL: https://github.com/endi1/org-shortcut
 ;; Package-Requires: ((plz "0.9.1") (emacs "28.1"))
 ;; Keywords: comm
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; SPDX-License-Identifier: GPL-3.0
 ;;; Commentary:
 ;; This package provides a minor mode that adds shortcut.com bindings to org-mode
@@ -55,12 +55,33 @@ A negative prefix argument disables it."
                          story-description
                          n)))))))))
 
+(defun org-shortcut-search (s)
+  "Search for shortcut using the query S and insert result as an =org-mode= entry."
+  (interactive "sQuery: ")
+  (let* (
+         (url (when s (format "https://api.app.shortcut.com/api/v3/search?query=%s" s)))
+         (capture-buffer (current-buffer))) ; Ensures the current buffer is captured
+    (if s
+        (progn
+          (message "Searching for query %s " s)
+          (plz 'get url
+            :headers (list (cons "Shortcut-Token" org-shortcut-api-key))
+            :as #'json-read
+            :then (lambda (alist)
+                    (with-current-buffer capture-buffer
+                      (let* ((stories (alist-get 'data (alist-get 'stories alist))))
+                        (let ((message-titles (mapcar (lambda (a) (list (alist-get 'name a) (alist-get 'id a))) stories)))
+                          ;; (message "The list of names is %s" message-titles)
+                          (let ((picked-story (completing-read "Choose: " message-titles)))
+                               (message "The picked story is %s" picked-story)
+                               (org-shortcut-get-story (cadr (assoc picked-story message-titles)))))))))))))
+
 (defun org-shortcut-org-insert-entry (&optional title story_link description story_id)
   "Insert new org entry from a shortcut story.
 Arguments: TITLE STORY_LINK DESCRIPTION STORY_ID."
   (save-excursion
-    (goto-char (point-max))  ; Move to end of buffer
-    (unless (bolp) (newline))  ; Ensure we're at the start of a line
+    (goto-char (point-max))      ; Move to end of buffer
+    (unless (bolp) (newline))    ; Ensure we're at the start of a line
     
     ;; Insert headline
     (insert (format "** TODO %s\n" (or title "New Entry")))
