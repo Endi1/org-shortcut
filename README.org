@@ -2,10 +2,6 @@
 Minor mode that provides org-mode bindings for shortcut.com
 
 
-** Installation
-For now you can install this minor mode only manually from Github.
-
-
 ** Setup
 In your emacs config file, you need to set up the shortcut API key: =(setq shortcut-api-key <api-key>)=
 ** Available functions
